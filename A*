@@ -1,0 +1,45 @@
+import heapq 
+ 
+def a_star_search(graph, start, goal, heuristic): 
+    # Priority queue (min-heap) to store (f(n), node, path, g(n)) 
+    # f(n) = g(n) + h(n), where g(n) is the cost from start to current node     pq = [(heuristic[start], start, [start], 0)]  # Initially g(n) = 0 for start     visited = set()  # To keep track of visited nodes 
+     
+    while pq: 
+        (f_value, node, path, g_value) = heapq.heappop(pq)  # Pop the node with the smallest f(n) 
+         
+        if node == goal: 
+            return path, g_value  # Return the path and the total cost 
+         
+        if node not in visited:             visited.add(node) 
+             
+            for neighbor, edge_cost in graph.get(node, []):                 if neighbor not in visited: 
+                    # Calculate new g(n) (cost to reach the neighbor) and f(n) = g(n) + h(n)                     new_g_value = g_value + edge_cost                     f_value = new_g_value + heuristic[neighbor] 
+                    heapq.heappush(pq, (f_value, neighbor, path + [neighbor], new_g_value)) 
+     
+    return None, 0  # Return None if no path is found 
+ 
+# Example graph with edge costs graph = { 
+    'A': [('B', 1), ('C', 4)], 
+    'B': [('D', 2), ('E', 5)], 
+    'C': [('F', 6)], 
+    'D': [], 
+    'E': [('G', 1)], 
+    'F': [], 
+    'G': [] 
+} 
+ 
+# Example heuristic (straight-line distance estimates to the goal) heuristic = { 
+    'A': 6, 
+    'B': 4, 
+    'C': 4, 
+    'D': 4, 
+    'E': 2, 
+    'F': 4, 
+    'G': 0 
+} 
+ 
+# User input for start and goal nodes start_node = input("Enter the start node: ") goal_node = input("Enter the goal node: ") 
+ 
+# Call the A* Search function path, total_cost = a_star_search(graph, start_node, goal_node, heuristic) 
+ 
+# Output the result if path:     print(f"Path found: {' -> '.join(path)}")     print(f"Total cost: {total_cost}") else:     print("No path found")
