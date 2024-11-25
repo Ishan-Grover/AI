@@ -1,0 +1,71 @@
+class Graph:
+    def __init__(self, graph, heuristic):
+        self.graph = graph  # Adjacency list representation of the graph
+        self.heuristic = heuristic  # Heuristic values for each node
+
+    def hill_climb(self, startNode, endNode):
+        path = []
+        currentNode = startNode
+        while True:
+            print(f"Exploring Node: {currentNode}")
+            path.append(currentNode)
+
+            if currentNode == endNode:
+                print("Reached the Goal Node Successfully!!")
+                print("Path taken:")
+                print(path)
+                return
+
+            currentCost = self.heuristic[currentNode]
+
+            minCost = 0
+            minCostNode = None
+            for nextNode in self.graph[currentNode]:
+                cost = currentCost - self.heuristic[nextNode]
+                if cost > minCost:
+                    minCost = cost
+                    minCostNode = nextNode
+
+            if minCostNode is None:
+                print("Unable to reach the goal node")
+                print("No path found.")
+                return
+
+            currentNode = minCostNode
+
+# Define the graph and heuristic values
+graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['E', 'F'],
+    'C': ['G'],
+    'D': ['H'],
+    'E': [],
+    'F': [],
+    'G': ['H'],
+    'H': []
+}
+
+heuristic = {
+    'A': 10,
+    'B': 8,
+    'C': 5,
+    'D': 7,
+    'E': 3,
+    'F': 1,
+    'G': 2,
+    'H': 0  # Goal node 'H'
+}
+
+# Create a graph object
+g = Graph(graph, heuristic)
+
+# Get user input for start and goal nodes
+start_node = input("Enter the start node: ").strip()
+goal_node = input("Enter the goal node: ").strip()
+
+# Validate the start and goal nodes
+if start_node not in graph or goal_node not in graph:
+    print("Invalid start or goal node. Please enter nodes that are present in the graph.")
+else:
+    # Perform hill climbing search
+    g.hill_climb(start_node, goal_node)
