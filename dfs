@@ -1,0 +1,45 @@
+def dfs(graph, start, goal): #defines fn named dfs containing three parameters
+#1.Graph: A dictionary representing the graph
+#2.Start: The starting node of the search
+#3.Goal: The goal node we are trying to reach
+    stack = [(start, [start])]  # Stack stores tuples of (current_node, path_taken)
+
+    while stack:
+        (node, path) = stack.pop()  # Pop the last element from the stack
+
+        if node == goal:  # Check if the current node is the goal
+            return path
+
+        # Push the left or right element (neighbors) to the stack
+        for neighbor in reversed(graph.get(node, [])):
+          #Retrieves the list of neighbors for the current node. If the node has no neighbors (or isn't in the graph), it returns an empty list.
+            if neighbor not in path:#Ensures that the neighbor has not already been visited
+                #This check avoids revisiting nodes and creating cycles in the path.
+                stack.append((neighbor, path + [neighbor]))
+                #If the neighbor hasn’t been visited, it is added to the stack.
+                #The path + [neighbor] creates a new list that extends the current path to include the neighbor.
+                #This new path is stored alongside the neighbor in the stack.
+
+    return None  # Return None if no path is found
+
+# Example usage
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': [],
+    'E': ['G'],
+    'F': [],
+    'G': []
+}
+
+start_node = input("Enter the start node: ")
+goal_node = input("Enter the goal node: ")
+
+path = dfs(graph, start_node, goal_node)
+
+if path:
+    print(f"Path found: {' -> '.join(path)}")
+else:
+    print("No path found")
+
