@@ -1,0 +1,48 @@
+import heapq
+def best_first_search(graph, start, goal, heuristic):
+  #priority queue(min-heap) to store(heuristic value, node, path)
+  pq = [(heuristic[start], start, [start])]
+  visited = set()#To keep track of visited nodes
+  while pq:
+    (priority, node, path) = heapq.heappop(pq)#Pop the node with the smallest heuristic value
+    if node == goal:
+      return path
+    if node not in visited:
+      visited.add(node)
+      for neighbour in graph.get(node, []):
+        if neighbour not in visited:
+          #Push the neighbour to the priority queue with its heuristic value
+          heapq.heappush(pq, (heuristic[neighbour], neighbour, path + [neighbour]))
+  return None
+
+# Example graph
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': [],
+    'E': ['G'],
+    'F': [],
+    'G': []
+}
+
+# Example heuristic (straight-line distance estimates to the goal)
+heuristic = {
+    'A': 6,
+    'B': 4,
+    'C': 4,
+    'D': 4,
+    'E': 2,
+    'F': 4,
+    'G': 0
+}
+
+start_node = input("Enter the start node: ")
+goal_node = input("Enter the goal node: ")
+
+path = best_first_search(graph, start_node, goal_node, heuristic)
+
+if path:
+    print(f"Path found: {' -> '.join(path)}")
+else:
+    print("No path found")
