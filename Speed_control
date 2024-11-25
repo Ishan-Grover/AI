@@ -1,0 +1,45 @@
+% Create a fuzzy inference system 
+fis = mamfis('Name', 'DC Motor Speed Controller'); 
+% Add input variable: Speed Error (Range: -100 to 100) 
+fis = addInput(fis, [-100 100], 'Name', 'SpeedError'); 
+% Define membership functions for the input (Speed Error) 
+fis = addMF(fis, 'SpeedError', 'trapmf', [-100 -100 -50 -10], 'Name', 'NB'); % Negative Big 
+fis = addMF(fis, 'SpeedError', 'trimf', [-50 -10 0], 'Name', 'NS'); % Negative Small 
+fis = addMF(fis, 'SpeedError', 'trimf', [-10 0 10], 'Name', 'Z'); % Zero 
+fis = addMF(fis, 'SpeedError', 'trimf', [0 10 50], 'Name', 'PS'); % Positive Small 
+fis = addMF(fis, 'SpeedError', 'trapmf', [10 50 100 100], 'Name', 'PB'); % Positive Big 
+% Add output variable: Control Signal (Range: -100 to 100) 
+fis = addOutput(fis, [-100 100], 'Name', 'ControlSignal'); 
+% Define membership functions for the output (Control Signal) 
+fis = addMF(fis, 'ControlSignal', 'trapmf', [-100 -100 -50 -10], 'Name', 'NB'); % Negative Big 
+fis = addMF(fis, 'ControlSignal', 'trimf', [-50 -10 0], 'Name', 'NS'); % Negative Small 
+fis = addMF(fis, 'ControlSignal', 'trimf', [-10 0 10], 'Name', 'Z'); % Zero 
+fis = addMF(fis, 'ControlSignal', 'trimf', [0 10 50], 'Name', 'PS'); % Positive Small 
+fis = addMF(fis, 'ControlSignal', 'trapmf', [10 50 100 100], 'Name', 'PB'); % Positive Big 
+% Add fuzzy rules (Correct rule format: [input_idx output_idx weight AND/OR]) 
+ruleList = [ ... 
+    1 1 1 1;  % If SpeedError is NB, then ControlSignal is NB 
+    2 2 1 1;  % If SpeedError is NS, then ControlSignal is NS 
+    3 3 1 1;  % If SpeedError is Z, then ControlSignal is Z 
+    4 4 1 1;  % If SpeedError is PS, then ControlSignal is PS 
+    5 5 1 1]; % If SpeedError is PB, then ControlSignal is PB 
+% Add rules to the FIS 
+fis = addRule(fis, ruleList); 
+% Show FIS details 
+fis 
+% Plot input and output membership functions 
+figure; 
+subplot(2,1,1); 
+plotmf(fis, 'input', 1); % Plot input (Speed Error) MFs 
+title('Input (Speed Error) Membership Functions'); 
+subplot(2,1,2); 
+plotmf(fis, 'output', 1); % Plot output (Control Signal) MFs 
+title('Output (Control Signal) Membership Functions'); 
+% Test the FIS with a specific input 
+speedError = 20;  % Example input (error in speed) 
+output = evalfis(fis, speedError);  % Evaluate the FIS with the input 
+% Display the control signal for the given input 
+disp(['Control signal for speed error of ', num2str(speedError), ' is: ', num2str(output)]); 
+ 
+% Open the FIS in the Fuzzy Logic Designer 
+fuzzyLogicDesigner(fis);
