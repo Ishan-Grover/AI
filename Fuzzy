@@ -1,0 +1,46 @@
+% Create a new FIS 
+fis = mamfis('Name', 'TemperatureControl'); 
+% Add inputs (Temperature and Humidity) 
+fis = addInput(fis, [0 50], 'Name', 'Temperature'); 
+fis = addInput(fis, [0 100], 'Name', 'Humidity'); 
+% Add output (Fan Speed) 
+fis = addOutput(fis, [0 100], 'Name', 'FanSpeed'); 
+% Define membership functions for Temperature 
+fis = addMF(fis, 'Temperature', 'trimf', [0 0 25], 'Name', 'Cold'); 
+fis = addMF(fis, 'Temperature', 'trimf', [0 25 50], 'Name', 'Warm'); 
+fis = addMF(fis, 'Temperature', 'trimf', [25 50 50], 'Name', 'Hot'); 
+% Define membership functions for Humidity 
+fis = addMF(fis, 'Humidity', 'trimf', [0 0 50], 'Name', 'Dry'); 
+fis = addMF(fis, 'Humidity', 'trimf', [0 50 100], 'Name', 'Normal'); 
+fis = addMF(fis, 'Humidity', 'trimf', [50 100 100], 'Name', 'Wet'); 
+% Define membership functions for Fan Speed 
+fis = addMF(fis, 'FanSpeed', 'trimf', [0 0 50], 'Name', 'Low'); 
+fis = addMF(fis, 'FanSpeed', 'trimf', [0 50 100], 'Name', 'Medium'); 
+fis = addMF(fis, 'FanSpeed', 'trimf', [50 100 100], 'Name', 'High'); 
+% Add rules 
+ruleList = [... 
+    1 1 1 1 1;   % If Temperature is Cold and Humidity is Dry, then FanSpeed is Low 
+    1 2 1 1 1;   % If Temperature is Cold and Humidity is Normal, then FanSpeed is Low 
+    1 3 2 1 1;   % If Temperature is Cold and Humidity is Wet, then FanSpeed is Medium 
+    2 1 2 1 1;   % If Temperature is Warm and Humidity is Dry, then FanSpeed is Medium 
+    2 2 2 1 1;   % If Temperature is Warm and Humidity is Normal, then FanSpeed is Medium 
+    2 3 3 1 1;   % If Temperature is Warm and Humidity is Wet, then FanSpeed is High 
+    3 1 3 1 1;   % If Temperature is Hot and Humidity is Dry, then FanSpeed is High 
+    3 2 3 1 1;   % If Temperature is Hot and Humidity is Normal, then FanSpeed is High 
+    3 3 3 1 1;   % If Temperature is Hot and Humidity is Wet, then FanSpeed is High 
+]; 
+%Each row in ruleList is a rule, where the columns represent the following: 
+%Index of the membership function for "Temperature" (1: Cold, 2: Warm, 3: Hot). 
+%Index of the membership function for "Humidity" (1: Dry, 2: Normal, 3: Wet). 
+%Index of the membership function for "FanSpeed" (1: Low, 2: Medium, 3: High). 
+%Weight of the rule (1 means full importance). 
+%Connection type (1 for AND, 2 for OR). 
+fis = addRule(fis, ruleList); 
+% Display the FIS structure 
+fuzzyLogicDesigner(fis); 
+% Evaluate the FIS for a sample input 
+temperature = 30; % Example Temperature value 
+humidity = 70;    % Example Humidity value 
+output = evalfis([temperature humidity], fis); 
+% Display the output 
+disp(['Fan Speed: ' num2str(output)]);
