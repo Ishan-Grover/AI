@@ -1,0 +1,48 @@
+#A deque (double-ended queue) is used to efficiently append and pop elements from both ends, which makes it suitable for implementing BFS.
+from collections import deque
+
+def bfs(graph, start, goal):
+    # Create a queue for BFS and mark the source node as visited
+    # We initialize the queue with a tuple containing the start node and a list with the start node as the initial path.
+    #This queue will store nodes to visit along with the path taken to reach each node.
+    queue = deque([(start, [start])])
+    visited = set([start])
+
+    while queue:
+        # Dequeue a vertex from the queue along with the path taken to reach it
+        vertex, path = queue.popleft()
+
+        # Check if we have reached the goal
+        if vertex == goal:
+            return path
+
+        # Get all adjacent vertices of the dequeued vertex
+        # If an adjacent vertex has not been visited, mark it as visited and enqueue it
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+
+    # If the goal node was not found
+    return None
+
+# Example usage:
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F', 'G'],
+    'D': ['B'],
+    'E': ['B'],
+    'F': ['C'],
+    'G': ['C']
+}
+
+start_node = input("Enter the start node: ")
+goal_node = input("Enter the goal node: ")
+
+path = bfs(graph, start_node, goal_node)
+
+if path:
+    print("Path to goal node found:", path)
+else:
+    print("No path found to the goal node.")
